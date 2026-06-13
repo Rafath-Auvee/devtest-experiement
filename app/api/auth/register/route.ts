@@ -70,7 +70,8 @@ export async function POST(req: NextRequest) {
     });
 
     return response;
-  } catch {
+  } catch (err) {
+    console.error("[register]", err);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }
