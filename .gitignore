@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# task assets
+Selection Task for Full Stack Engineer at Appifylab/
+task.md

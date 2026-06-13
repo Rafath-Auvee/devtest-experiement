@@ -1,0 +1,57 @@
+/* FontAwesome — self-hosted */
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url('/fonts/fa-solid-900.woff2') format('woff2'),
+       url('/fonts/fa-solid-900.woff') format('woff'),
+       url('/fonts/fa-solid-900.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('/fonts/fa-regular-400.woff2') format('woff2'),
+       url('/fonts/fa-regular-400.woff') format('woff'),
+       url('/fonts/fa-regular-400.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Font Awesome 6 Brands';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('/fonts/fa-brands-400.woff2') format('woff2'),
+       url('/fonts/fa-brands-400.woff') format('woff'),
+       url('/fonts/fa-brands-400.ttf') format('truetype');
+}
+
+/* Flaticon — self-hosted */
+@font-face {
+  font-family: 'Flaticon';
+  font-style: normal;
+  font-weight: normal;
+  font-display: block;
+  src: url('/fonts/flaticon/Flaticon.woff2') format('woff2'),
+       url('/fonts/flaticon/Flaticon.woff') format('woff'),
+       url('/fonts/flaticon/Flaticon.ttf') format('truetype'),
+       url('/fonts/flaticon/Flaticon.svg#Flaticon') format('svg');
+}
+
+[class^='flaticon-']::before,
+[class*=' flaticon-']::before {
+  font-family: Flaticon;
+  font-style: normal;
+  font-weight: normal;
+}
+
+.flaticon-left-arrow-black-triangular-shape::before { content: '\f100'; }
+.flaticon-success::before                           { content: '\f101'; }
+.flaticon-money-bag::before                         { content: '\f102'; }
+.flaticon-guarantee::before                         { content: '\f103'; }
+.flaticon-stopwatch::before                         { content: '\f104'; }
+.flaticon-trustworthy::before                       { content: '\f105'; }
+.flaticon-experience::before                        { content: '\f106'; }

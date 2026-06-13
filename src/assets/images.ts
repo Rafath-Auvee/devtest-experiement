@@ -1,0 +1,140 @@
+const BASE = '/images' as const
+
+export const images = {
+  // Brand
+  logo: `${BASE}/logo.svg`,
+  logoFavicon: `${BASE}/logo-copy.svg`,
+  google: `${BASE}/google.svg`,
+
+  // Auth pages
+  loginHero: `${BASE}/login.png`,
+  registrationHero: `${BASE}/registration.png`,
+  registrationHeroDark: `${BASE}/registration1.png`,
+
+  // Decorative shapes (light / dark variants)
+  shape1Svg: `${BASE}/shape1.svg`,
+  shape1Png: `${BASE}/shape1.png`,
+  shape2: `${BASE}/shape2.svg`,
+  shape3: `${BASE}/shape3.svg`,
+  darkShape: `${BASE}/dark_shape.svg`,
+  darkShape1: `${BASE}/dark_shape1.svg`,
+  darkShape2: `${BASE}/dark_shape2.svg`,
+  line: `${BASE}/line.svg`,
+  caretDown: `${BASE}/Caretdown.svg`,
+  path: `${BASE}/Path.svg`,
+
+  // Feed / post
+  postImg: `${BASE}/post_img.png`,
+  txtImg: `${BASE}/txt_img.png`,
+  miniPic: `${BASE}/mini_pic.png`,
+  topImg: `${BASE}/top_img.png`,
+  feedEvent1: `${BASE}/feed_event1.png`,
+  timelineImg: `${BASE}/timeline_img.png`,
+
+  // Profile / user
+  avatar: `${BASE}/Avatar.png`,
+  profile: `${BASE}/profile.png`,
+  profile1: `${BASE}/profile-1.png`,
+  profileCover: `${BASE}/profile-cover-img.png`,
+  man: `${BASE}/man.png`,
+  commentImg: `${BASE}/comment_img.png`,
+
+  // Reaction icons
+  reactImg1: `${BASE}/react_img1.png`,
+  reactImg2: `${BASE}/react_img2.png`,
+  reactImg3: `${BASE}/react_img3.png`,
+  reactImg4: `${BASE}/react_img4.png`,
+  reactImg5: `${BASE}/react_img5.png`,
+  reactImg6: `${BASE}/react_img6.png`,
+
+  // People / friends
+  people1: `${BASE}/people1.png`,
+  people2: `${BASE}/people2.png`,
+  people3: `${BASE}/people3.png`,
+  friendReq: `${BASE}/friend-req.png`,
+  friendsImg: `${BASE}/friends_img.png`,
+
+  // Card people
+  cardPpl1: `${BASE}/card_ppl1.png`,
+  cardPpl2: `${BASE}/card_ppl2.png`,
+  cardPpl3: `${BASE}/card_ppl3.png`,
+  cardPpl4: `${BASE}/card_ppl4.png`,
+
+  // Group
+  groupProfile: `${BASE}/group-profile.png`,
+  groupSingle: `${BASE}/group-single.png`,
+  grpCt1: `${BASE}/grp_ct1.png`,
+  grpCt2: `${BASE}/grp_ct2.png`,
+  grpCt3: `${BASE}/grp_ct3.png`,
+  grpCt4: `${BASE}/grp_ct4.png`,
+  grpCt5: `${BASE}/grp_ct5.png`,
+  grpCt6: `${BASE}/grp_ct6.png`,
+
+  // Chat
+  chatImg: `${BASE}/chat_img.png`,
+  chatProfile: `${BASE}/chat_profile.png`,
+  chatProfile1: `${BASE}/chat_profile1.png`,
+  chat1: `${BASE}/chat1_img.png`,
+  chat2: `${BASE}/chat2_img.png`,
+  chat3: `${BASE}/chat3_img.png`,
+  chat4: `${BASE}/chat4_img.png`,
+  chat5: `${BASE}/chat5_img.png`,
+  chat6: `${BASE}/chat6_img.png`,
+  chat7: `${BASE}/chat7_img.png`,
+
+  // Feed images (generic numbered)
+  img1: `${BASE}/img1.png`,
+  img2: `${BASE}/img2.png`,
+  img3: `${BASE}/img3.png`,
+  img4: `${BASE}/img4.png`,
+  img5: `${BASE}/img5.png`,
+  img6: `${BASE}/img6.png`,
+  img7: `${BASE}/img7.png`,
+  img8: `${BASE}/img8.png`,
+  img9: `${BASE}/img9.png`,
+  img10: `${BASE}/img10.png`,
+  img11: `${BASE}/img11.png`,
+  img12: `${BASE}/img12.png`,
+
+  // Friends (f-series)
+  f1: `${BASE}/f1.png`,
+  f2: `${BASE}/f2.png`,
+  f3: `${BASE}/f3.png`,
+  f4: `${BASE}/f4.png`,
+  f5: `${BASE}/f5.png`,
+  f6: `${BASE}/f6.png`,
+  f7: `${BASE}/f7.png`,
+  f8: `${BASE}/f8.png`,
+  f9: `${BASE}/f9.png`,
+
+  // Photos gallery
+  photos1: `${BASE}/photos1.png`,
+  photos2: `${BASE}/photos2.png`,
+  photos3: `${BASE}/photos3.png`,
+  photos4: `${BASE}/photos4.png`,
+  photos5: `${BASE}/photos5.png`,
+  photos6: `${BASE}/photos6.png`,
+  photos7: `${BASE}/photos7.png`,
+  photos8: `${BASE}/photos8.png`,
+  photos9: `${BASE}/photos9.png`,
+
+  // Recommendations
+  recommend1: `${BASE}/recommend1.png`,
+  recommend2: `${BASE}/recommend2.png`,
+  recommend3: `${BASE}/recommend3.png`,
+  recommend4: `${BASE}/recommend4.png`,
+  recommendMini: `${BASE}/recommend_mini.png`,
+
+  // Sliders
+  slider1: `${BASE}/slider1.png`,
+  slider2: `${BASE}/slider2.png`,
+  slider3: `${BASE}/slider3.png`,
+  slider4: `${BASE}/slider4.png`,
+
+  // Mobile story
+  mobileStory: `${BASE}/mobile_story_img.png`,
+  mobileStory1: `${BASE}/mobile_story_img1.png`,
+  mobileStory2: `${BASE}/mobile_story_img2.png`,
+} as const
+
+export type ImageKey = keyof typeof images
