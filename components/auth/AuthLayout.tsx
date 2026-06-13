@@ -1,4 +1,5 @@
-import { images } from "@/src/assets/images";
+import Image from "next/image";
+import { images } from "@/lib/assets/images";
 
 interface AuthLayoutProps {
   wrapperClass: string;
@@ -9,16 +10,16 @@ export default function AuthLayout({ wrapperClass, children }: AuthLayoutProps) 
   return (
     <section className={`${wrapperClass} _layout_main_wrapper`}>
       <div className="_shape_one">
-        <img src={images.shape1Svg} alt="" className="_shape_img" />
-        <img src={images.darkShape} alt="" className="_dark_shape" />
+        <Image src={images.shape1Svg} alt="" width={400} height={400} className="_shape_img" />
+        <Image src={images.darkShape} alt="" width={400} height={400} className="_dark_shape" />
       </div>
       <div className="_shape_two">
-        <img src={images.shape2} alt="" className="_shape_img" />
-        <img src={images.darkShape1} alt="" className="_dark_shape _dark_shape_opacity" />
+        <Image src={images.shape2} alt="" width={400} height={400} className="_shape_img" />
+        <Image src={images.darkShape1} alt="" width={400} height={400} className="_dark_shape _dark_shape_opacity" />
       </div>
       <div className="_shape_three">
-        <img src={images.shape3} alt="" className="_shape_img" />
-        <img src={images.darkShape2} alt="" className="_dark_shape _dark_shape_opacity" />
+        <Image src={images.shape3} alt="" width={300} height={300} className="_shape_img" />
+        <Image src={images.darkShape2} alt="" width={300} height={300} className="_dark_shape _dark_shape_opacity" />
       </div>
       <div className="_social_login_wrap">
         <div className="container">

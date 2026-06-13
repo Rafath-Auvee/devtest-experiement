@@ -1,7 +1,7 @@
-import AuthLayout from "@/components/auth/AuthLayout";
+﻿import AuthLayout from "@/components/auth/AuthLayout";
 import AuthHero from "@/components/auth/AuthHero";
 import LoginForm from "@/components/auth/LoginForm";
-import { images } from "@/src/assets/images";
+import { images } from "@/lib/assets/images";
 
 export default function LoginPage() {
   return (
@@ -11,3 +11,4 @@ export default function LoginPage() {
     </AuthLayout>
   );
 }
+

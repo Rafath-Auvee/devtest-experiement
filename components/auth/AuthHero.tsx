@@ -11,11 +11,11 @@ export default function AuthHero({ src, alt, darkSrc }: AuthHeroProps) {
     <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12">
       <div className="_social_login_left">
         <div className="_social_login_left_image">
-          <img src={src} alt={alt} className="_left_img" />
+          <Image src={src} alt={alt} width={700} height={520} className="_left_img" priority />
         </div>
         {darkSrc && (
           <div className="_social_registration_right_image_dark">
-            <img src={darkSrc} alt={alt} />
+            <Image src={darkSrc} alt={alt} width={700} height={520} priority />
           </div>
         )}
       </div>

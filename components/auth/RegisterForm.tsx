@@ -1,9 +1,21 @@
 "use client";
 
+import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { images } from "@/src/assets/images";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import toast from "react-hot-toast";
+import { images } from "@/lib/assets/images";
 import GoogleButton from "./GoogleButton";
 import FormInput from "./FormInput";
+
+interface RegisterFields {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  agreeTerms: boolean;
+}
 
 const inputClasses = {
   label: "_social_registration_label _mar_b8",
@@ -12,11 +24,77 @@ const inputClasses = {
 };
 
 export default function RegisterForm() {
+  const router = useRouter();
+  const [fields, setFields] = useState<RegisterFields>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    agreeTerms: false,
+  });
+  const [loading, setLoading] = useState(false);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value, type, checked } = e.target;
+    setFields((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+
+    if (!fields.firstName || !fields.lastName || !fields.email || !fields.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    if (fields.password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+
+    if (!fields.agreeTerms) {
+      toast("You must agree to the terms & conditions", { icon: "⚠️" });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: fields.firstName,
+          lastName: fields.lastName,
+          email: fields.email,
+          password: fields.password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message ?? "Registration failed");
+        return;
+      }
+
+      toast.success("Account created! Welcome aboard 🎉");
+      router.push("/feed");
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12">
       <div className="_social_registration_content">
         <div className="_social_registration_right_logo _mar_b28">
-          <img src={images.logo} alt="Buddy Script" className="_right_logo" />
+          <Image src={images.logo} alt="Buddy Script" width={150} height={48} className="_right_logo" priority />
         </div>
 
         <p className="_social_registration_content_para _mar_b8">Get Started Now</p>
@@ -33,13 +111,15 @@ export default function RegisterForm() {
           <span>Or</span>
         </div>
 
-        <form className="_social_registration_form">
+        <form className="_social_registration_form" onSubmit={handleSubmit}>
           <div className="row">
             <FormInput
               label="First Name"
               id="reg-firstName"
               type="text"
               name="firstName"
+              value={fields.firstName}
+              onChange={handleChange}
               autoComplete="given-name"
               required
               labelClass={inputClasses.label}
@@ -51,6 +131,8 @@ export default function RegisterForm() {
               id="reg-lastName"
               type="text"
               name="lastName"
+              value={fields.lastName}
+              onChange={handleChange}
               autoComplete="family-name"
               required
               labelClass={inputClasses.label}
@@ -62,6 +144,8 @@ export default function RegisterForm() {
               id="reg-email"
               type="email"
               name="email"
+              value={fields.email}
+              onChange={handleChange}
               autoComplete="email"
               required
               labelClass={inputClasses.label}
@@ -73,6 +157,8 @@ export default function RegisterForm() {
               id="reg-password"
               type="password"
               name="password"
+              value={fields.password}
+              onChange={handleChange}
               autoComplete="new-password"
               required
               labelClass={inputClasses.label}
@@ -89,7 +175,8 @@ export default function RegisterForm() {
                   type="checkbox"
                   id="agreeTerms"
                   name="agreeTerms"
-                  required
+                  checked={fields.agreeTerms}
+                  onChange={handleChange}
                 />
                 <label
                   className="form-check-label _social_registration_form_check_label"
@@ -107,8 +194,9 @@ export default function RegisterForm() {
                 <button
                   type="submit"
                   className="_social_registration_form_btn_link _btn1"
+                  disabled={loading}
                 >
-                  Register now
+                  {loading ? "Creating account..." : "Register now"}
                 </button>
               </div>
             </div>

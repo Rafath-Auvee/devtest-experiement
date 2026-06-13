@@ -1,7 +1,7 @@
-import AuthLayout from "@/components/auth/AuthLayout";
+﻿import AuthLayout from "@/components/auth/AuthLayout";
 import AuthHero from "@/components/auth/AuthHero";
 import RegisterForm from "@/components/auth/RegisterForm";
-import { images } from "@/src/assets/images";
+import { images } from "@/lib/assets/images";
 
 export default function RegisterPage() {
   return (
@@ -15,3 +15,4 @@ export default function RegisterPage() {
     </AuthLayout>
   );
 }
+

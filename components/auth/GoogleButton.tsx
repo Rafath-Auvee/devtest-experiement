@@ -1,4 +1,5 @@
-import { images } from "@/src/assets/images";
+﻿import Image from "next/image";
+import { images } from "@/lib/assets/images";
 
 interface GoogleButtonProps {
   label: string;
@@ -11,8 +12,9 @@ export default function GoogleButton({
 }: GoogleButtonProps) {
   return (
     <button type="button" className={wrapperClass}>
-      <img src={images.google} alt="Google" className="_google_img" />
+      <Image src={images.google} alt="Google" width={20} height={20} className="_google_img" />
       <span>{label}</span>
     </button>
   );
 }
+

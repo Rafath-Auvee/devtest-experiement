@@ -1,16 +1,75 @@
 "use client";
 
+import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { images } from "@/src/assets/images";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import toast from "react-hot-toast";
+import { images } from "@/lib/assets/images";
 import GoogleButton from "./GoogleButton";
 import FormInput from "./FormInput";
 
+interface LoginFields {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+}
+
 export default function LoginForm() {
+  const router = useRouter();
+  const [fields, setFields] = useState<LoginFields>({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
+  const [loading, setLoading] = useState(false);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value, type, checked } = e.target;
+    setFields((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+
+    if (!fields.email || !fields.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: fields.email, password: fields.password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message ?? "Login failed");
+        return;
+      }
+
+      toast.success(`Welcome back, ${data.user.firstName}!`);
+      router.push("/feed");
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12">
       <div className="_social_login_content">
         <div className="_social_login_left_logo _mar_b28">
-          <img src={images.logo} alt="Buddy Script" className="_left_logo" />
+          <Image src={images.logo} alt="Buddy Script" width={150} height={48} className="_left_logo" priority />
         </div>
 
         <p className="_social_login_content_para _mar_b8">Welcome back</p>
@@ -24,13 +83,15 @@ export default function LoginForm() {
           <span>Or</span>
         </div>
 
-        <form className="_social_login_form">
+        <form className="_social_login_form" onSubmit={handleSubmit}>
           <div className="row">
             <FormInput
               label="Email"
               id="login-email"
               type="email"
               name="email"
+              value={fields.email}
+              onChange={handleChange}
               autoComplete="email"
               required
             />
@@ -39,6 +100,8 @@ export default function LoginForm() {
               id="login-password"
               type="password"
               name="password"
+              value={fields.password}
+              onChange={handleChange}
               autoComplete="current-password"
               required
             />
@@ -52,6 +115,8 @@ export default function LoginForm() {
                   type="checkbox"
                   id="rememberMe"
                   name="rememberMe"
+                  checked={fields.rememberMe}
+                  onChange={handleChange}
                 />
                 <label
                   className="form-check-label _social_login_form_check_label"
@@ -71,8 +136,12 @@ export default function LoginForm() {
           <div className="row">
             <div className="col-lg-12 col-md-12 col-xl-12 col-sm-12">
               <div className="_social_login_form_btn _mar_t40 _mar_b60">
-                <button type="submit" className="_social_login_form_btn_link _btn1">
-                  Login now
+                <button
+                  type="submit"
+                  className="_social_login_form_btn_link _btn1"
+                  disabled={loading}
+                >
+                  {loading ? "Logging in..." : "Login now"}
                 </button>
               </div>
             </div>
