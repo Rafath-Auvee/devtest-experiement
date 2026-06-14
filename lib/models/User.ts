@@ -4,7 +4,10 @@ export interface IUser extends Document {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+  password?: string;
+  googleId?: string;
+  avatar?: string;
+  provider: "local" | "google";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -14,7 +17,11 @@ const userSchema = new Schema<IUser>(
     firstName: { type: String, required: true, trim: true, maxlength: 50 },
     lastName:  { type: String, required: true, trim: true, maxlength: 50 },
     email:     { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password:  { type: String, required: true, minlength: 8 },
+    // Optional: Google-authenticated accounts have no local password.
+    password:  { type: String, minlength: 8, select: false },
+    googleId:  { type: String, sparse: true },
+    avatar:    { type: String },
+    provider:  { type: String, enum: ["local", "google"], default: "local" },
   },
   { timestamps: true }
 );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -21,6 +21,15 @@ export default function LoginForm() {
     rememberMe: false,
   });
   const [loading, setLoading] = useState(false);
+
+  // Surface OAuth errors redirected back from /api/auth/google/callback?error=...
+  useEffect(() => {
+    const error = new URLSearchParams(window.location.search).get("error");
+    if (error) {
+      toast.error(error);
+      window.history.replaceState({}, "", "/login");
+    }
+  }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value, type, checked } = e.target;

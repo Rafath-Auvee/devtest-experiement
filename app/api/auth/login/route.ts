@@ -25,6 +25,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!user.password) {
+      return NextResponse.json(
+        { message: "This account uses Google sign-in. Please continue with Google." },
+        { status: 401 }
+      );
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return NextResponse.json(

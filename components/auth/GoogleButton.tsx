@@ -11,10 +11,10 @@ export default function GoogleButton({
   wrapperClass = "_social_login_content_btn _mar_b40",
 }: GoogleButtonProps) {
   return (
-    <button type="button" className={wrapperClass}>
+    <a href="/api/auth/google" className={wrapperClass} style={{ textDecoration: "none" }}>
       <Image src={images.google} alt="Google" width={20} height={20} className="_google_img" />
       <span>{label}</span>
-    </button>
+    </a>
   );
 }
 
