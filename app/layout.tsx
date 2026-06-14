@@ -1,19 +1,12 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import { poppins } from "@/lib/assets/fonts";
 import "./globals.css";
 import "../lib/styles/bootstrap.min.css";
 import "../lib/styles/fonts.css";
 import "../lib/styles/common.css";
 import "../lib/styles/main.css";
 import "../lib/styles/responsive.css";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "600", "700", "800"],
-  display: "swap",
-  variable: "--font-poppins",
-});
 
 export const metadata: Metadata = {
   title: "Buddy Script",
@@ -29,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body>
         {children}
         <Toaster

@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
       { pathname: "/images/**" },
       { pathname: "/fonts/**" },
     ],
+    remotePatterns: [
+      { protocol: "https", hostname: "iili.io" },
+    ],
   },
   experimental: {
     optimizePackageImports: ["next/font"],

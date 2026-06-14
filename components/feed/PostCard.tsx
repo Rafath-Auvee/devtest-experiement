@@ -1,24 +1,44 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
+import toast from "react-hot-toast";
 import { images } from "@/lib/assets/images";
-import { FeedPost } from "./types";
+import { FeedPost, PostAuthor } from "./types";
+import { timeAgo, likedByText } from "./format";
+import CommentSection from "./CommentSection";
 
 interface PostCardProps {
   post: FeedPost;
 }
 
-function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "Just now";
-  if (mins < 60) return `${mins} minute${mins > 1 ? "s" : ""} ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  const days = Math.floor(hours / 24);
-  return `${days} day${days > 1 ? "s" : ""} ago`;
-}
-
 export default function PostCard({ post }: PostCardProps) {
+  const [likes, setLikes] = useState<PostAuthor[]>(post.likes);
+  const [likedByMe, setLikedByMe] = useState(post.likedByMe);
+  const [pending, setPending] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [commentCount, setCommentCount] = useState<number | null>(null);
+
   const authorName = `${post.author.firstName} ${post.author.lastName}`;
+
+  async function toggleLike() {
+    if (pending) return;
+    setPending(true);
+    try {
+      const res = await fetch(`/api/posts/${post._id}/like`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.message ?? "Failed to update like");
+        return;
+      }
+      setLikes(data.likes);
+      setLikedByMe(data.likedByMe);
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setPending(false);
+    }
+  }
 
   return (
     <div className="_feed_inner_timeline_post_area _b_radious6 _padd_b24 _padd_t24 _mar_b16">
@@ -60,30 +80,44 @@ export default function PostCard({ post }: PostCardProps) {
       </div>
 
       <div className="_feed_inner_timeline_total_reacts _padd_r24 _padd_l24 _mar_b26">
-        <div className="_feed_inner_timeline_total_reacts_image">
+        <div className="_feed_inner_timeline_total_reacts_image" title={likedByText(likes)}>
           <Image src={images.reactImg1} alt="" width={20} height={20} className="_react_img1" />
           <Image src={images.reactImg2} alt="" width={20} height={20} className="_react_img" />
-          <p className="_feed_inner_timeline_total_reacts_para">{post.likes.length}</p>
+          <p className="_feed_inner_timeline_total_reacts_para">{likes.length}</p>
         </div>
         <div className="_feed_inner_timeline_total_reacts_txt">
-          <p className="_feed_inner_timeline_total_reacts_para1">
-            <span>0</span> Comment
-          </p>
+          {likedByText(likes) && (
+            <p className="_feed_inner_timeline_total_reacts_para1">{likedByText(likes)}</p>
+          )}
+          {commentCount !== null && (
+            <p className="_feed_inner_timeline_total_reacts_para2">
+              <span>{commentCount}</span> Comment{commentCount === 1 ? "" : "s"}
+            </p>
+          )}
         </div>
       </div>
 
       <div className="_feed_inner_timeline_reaction">
-        <button className="_feed_inner_timeline_reaction_emoji _feed_reaction">
+        <button
+          type="button"
+          onClick={toggleLike}
+          disabled={pending}
+          className={`_feed_inner_timeline_reaction_emoji _feed_reaction${likedByMe ? " _feed_reaction_active" : ""}`}
+        >
           <span className="_feed_inner_timeline_reaction_link">
             <span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={likedByMe ? "#1890FF" : "none"} stroke={likedByMe ? "#1890FF" : "#000"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
               </svg>
-              Like
+              {likedByMe ? "Liked" : "Like"}
             </span>
           </span>
         </button>
-        <button className="_feed_inner_timeline_reaction_comment _feed_reaction">
+        <button
+          type="button"
+          onClick={() => setShowComments((s) => !s)}
+          className="_feed_inner_timeline_reaction_comment _feed_reaction"
+        >
           <span className="_feed_inner_timeline_reaction_link">
             <span>
               <svg className="_reaction_svg" xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" viewBox="0 0 21 21">
@@ -94,7 +128,7 @@ export default function PostCard({ post }: PostCardProps) {
             </span>
           </span>
         </button>
-        <button className="_feed_inner_timeline_reaction_share _feed_reaction">
+        <button type="button" className="_feed_inner_timeline_reaction_share _feed_reaction">
           <span className="_feed_inner_timeline_reaction_link">
             <span>
               <svg className="_reaction_svg" xmlns="http://www.w3.org/2000/svg" width="24" height="21" fill="none" viewBox="0 0 24 21">
@@ -106,20 +140,9 @@ export default function PostCard({ post }: PostCardProps) {
         </button>
       </div>
 
-      <div className="_feed_inner_timeline_cooment_area">
-        <div className="_feed_inner_comment_box">
-          <form className="_feed_inner_comment_box_form">
-            <div className="_feed_inner_comment_box_content">
-              <div className="_feed_inner_comment_box_content_image">
-                <Image src={images.commentImg} alt="" width={36} height={36} className="_comment_img" />
-              </div>
-              <div className="_feed_inner_comment_box_content_txt">
-                <textarea className="form-control _comment_textarea" placeholder="Write a comment" />
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+      {showComments && (
+        <CommentSection postId={post._id} onCountChange={setCommentCount} />
+      )}
     </div>
   );
 }

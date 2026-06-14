@@ -2,7 +2,6 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { images } from "@/lib/assets/images";
@@ -24,7 +23,6 @@ const inputClasses = {
 };
 
 export default function RegisterForm() {
-  const router = useRouter();
   const [fields, setFields] = useState<RegisterFields>({
     firstName: "",
     lastName: "",
@@ -82,7 +80,7 @@ export default function RegisterForm() {
       }
 
       toast.success("Account created! Welcome aboard 🎉");
-      router.push("/feed");
+      window.location.href = "/feed";
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {

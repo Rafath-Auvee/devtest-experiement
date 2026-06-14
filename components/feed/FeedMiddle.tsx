@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import PostCreator from "./PostCreator";
 import PostCard from "./PostCard";
 import { FeedPost } from "./types";
@@ -8,14 +8,37 @@ import { FeedPost } from "./types";
 export default function FeedMiddle() {
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+
+  const loadPosts = useCallback(async (cursor?: string) => {
+    const url = cursor ? `/api/posts?cursor=${cursor}` : "/api/posts";
+    const res = await fetch(url);
+    const data = await res.json();
+    return data as { posts: FeedPost[]; nextCursor: string | null };
+  }, []);
 
   useEffect(() => {
-    fetch("/api/posts")
-      .then((res) => res.json())
-      .then((data) => setPosts(data.posts ?? []))
+    loadPosts()
+      .then((data) => {
+        setPosts(data.posts ?? []);
+        setNextCursor(data.nextCursor ?? null);
+      })
       .catch(() => setPosts([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [loadPosts]);
+
+  async function handleLoadMore() {
+    if (!nextCursor || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const data = await loadPosts(nextCursor);
+      setPosts((prev) => [...prev, ...(data.posts ?? [])]);
+      setNextCursor(data.nextCursor ?? null);
+    } finally {
+      setLoadingMore(false);
+    }
+  }
 
   function handleCreated(post: FeedPost) {
     setPosts((prev) => [post, ...prev]);
@@ -34,7 +57,24 @@ export default function FeedMiddle() {
               No posts yet. Be the first to post something.
             </p>
           ) : (
-            posts.map((post) => <PostCard key={post._id} post={post} />)
+            <>
+              {posts.map((post) => (
+                <PostCard key={post._id} post={post} />
+              ))}
+              {nextCursor && (
+                <div style={{ textAlign: "center", padding: "8px 0 24px" }}>
+                  <button
+                    type="button"
+                    onClick={handleLoadMore}
+                    disabled={loadingMore}
+                    className="_feed_inner_text_area_btn_link"
+                    style={{ padding: "10px 28px" }}
+                  >
+                    {loadingMore ? "Loading…" : "Load more"}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

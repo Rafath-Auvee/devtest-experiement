@@ -2,7 +2,6 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { images } from "@/lib/assets/images";
@@ -16,7 +15,6 @@ interface LoginFields {
 }
 
 export default function LoginForm() {
-  const router = useRouter();
   const [fields, setFields] = useState<LoginFields>({
     email: "",
     password: "",
@@ -57,7 +55,7 @@ export default function LoginForm() {
       }
 
       toast.success(`Welcome back, ${data.user.firstName}!`);
-      router.push("/feed");
+      window.location.href = "/feed";
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {

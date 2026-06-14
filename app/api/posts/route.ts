@@ -3,9 +3,12 @@ import { connectDB } from "@/lib/db/mongoose";
 import Post from "@/lib/models/Post";
 import { getCurrentUser } from "@/lib/auth/session";
 
-export async function GET() {
+const PAGE_SIZE = 10;
+
+export async function GET(req: NextRequest) {
   try {
     const currentUser = await getCurrentUser();
+    const cursor = req.nextUrl.searchParams.get("cursor");
 
     await connectDB();
 
@@ -13,13 +16,30 @@ export async function GET() {
       ? { $or: [{ visibility: "public" as const }, { author: currentUser.userId }] }
       : { visibility: "public" as const };
 
-    const posts = await Post.find(visibilityFilter)
-      .sort({ createdAt: -1 })
-      .limit(20)
+    const query = cursor
+      ? { ...visibilityFilter, _id: { $lt: cursor } }
+      : visibilityFilter;
+
+    const posts = await Post.find(query)
+      .sort({ _id: -1 })
+      .limit(PAGE_SIZE + 1)
       .populate("author", "firstName lastName")
+      .populate("likes", "firstName lastName")
       .lean();
 
-    return NextResponse.json({ posts }, { status: 200 });
+    const hasMore = posts.length > PAGE_SIZE;
+    const page = hasMore ? posts.slice(0, PAGE_SIZE) : posts;
+
+    const shaped = page.map((post) => ({
+      ...post,
+      likedByMe: currentUser
+        ? post.likes.some((u) => u._id.toString() === currentUser.userId)
+        : false,
+    }));
+
+    const nextCursor = hasMore ? page[page.length - 1]._id.toString() : null;
+
+    return NextResponse.json({ posts: shaped, nextCursor }, { status: 200 });
   } catch (err) {
     console.error("[posts:GET]", err);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
@@ -52,7 +72,10 @@ export async function POST(req: NextRequest) {
       .populate("author", "firstName lastName")
       .lean();
 
-    return NextResponse.json({ post: populated }, { status: 201 });
+    return NextResponse.json(
+      { post: { ...populated, likes: [], likedByMe: false } },
+      { status: 201 }
+    );
   } catch (err) {
     console.error("[posts:POST]", err);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });

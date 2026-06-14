@@ -10,6 +10,18 @@ export interface FeedPost {
   text: string;
   image?: string;
   visibility: "public" | "private";
-  likes: string[];
+  likes: PostAuthor[];
+  likedByMe: boolean;
+  createdAt: string;
+}
+
+export interface FeedComment {
+  _id: string;
+  post: string;
+  author: PostAuthor;
+  parent: string | null;
+  text: string;
+  likes: PostAuthor[];
+  likedByMe: boolean;
   createdAt: string;
 }

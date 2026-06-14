@@ -11,7 +11,7 @@ export default async function FeedPage() {
 
   return (
     <div className="_layout">
-      <FeedNavbar />
+      <FeedNavbar firstName={user.firstName} lastName={user.lastName} />
       <div className="_main_layout">
         <div className="container _custom_container">
           <div className="_layout_inner_wrap">
