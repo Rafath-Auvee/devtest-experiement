@@ -28,6 +28,7 @@ export const images = {
   timelineImg: `${BASE}/timeline_img.png`,
 
   avatar: `${BASE}/Avatar.png`,
+  defaultAvatar: `${BASE}/default-avatar.svg`,
   profile: `${BASE}/profile.png`,
   profile1: `${BASE}/profile-1.png`,
   profileCover: `${BASE}/profile-cover-img.png`,

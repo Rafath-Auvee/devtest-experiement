@@ -111,10 +111,16 @@ export default function FeedNavbar({ firstName, lastName }: FeedNavbarProps) {
 
           <div className="_header_nav_profile" ref={dropRef}>
             <div className="_header_nav_profile_image">
-              <Image src={images.profile} alt="Profile" width={38} height={38} className="_nav_profile_img" />
+              <Image src={images.defaultAvatar} alt="Profile" width={38} height={38} className="_nav_profile_img" />
             </div>
             <div className="_header_nav_dropdown">
-              <p className="_header_nav_para">{fullName}</p>
+              <p
+                className="_header_nav_para"
+                onClick={() => setDropOpen((s) => !s)}
+                style={{ cursor: "pointer" }}
+              >
+                {fullName}
+              </p>
               <button
                 className="_header_nav_dropdown_btn _dropdown_toggle"
                 type="button"
@@ -128,11 +134,15 @@ export default function FeedNavbar({ firstName, lastName }: FeedNavbarProps) {
 
             <div
               className="_nav_profile_dropdown _profile_dropdown"
-              style={{ display: dropOpen ? "block" : "none" }}
+              style={
+                dropOpen
+                  ? { opacity: 1, visibility: "visible", transform: "translateY(40px)" }
+                  : undefined
+              }
             >
               <div className="_nav_profile_dropdown_info">
                 <div className="_nav_profile_dropdown_image">
-                  <Image src={images.profile} alt="Profile" width={48} height={48} className="_nav_drop_img" />
+                  <Image src={images.defaultAvatar} alt="Profile" width={48} height={48} className="_nav_drop_img" />
                 </div>
                 <div className="_nav_profile_dropdown_info_txt">
                   <h4 className="_nav_dropdown_title">{fullName}</h4>

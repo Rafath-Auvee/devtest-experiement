@@ -82,7 +82,7 @@ export default function PostCreator({ onCreated }: PostCreatorProps) {
       <form onSubmit={handleSubmit}>
         <div className="_feed_inner_text_area_box">
           <div className="_feed_inner_text_area_box_image">
-            <Image src={images.txtImg} alt="" width={40} height={40} className="_txt_img" />
+            <Image src={images.defaultAvatar} alt="" width={40} height={40} className="_txt_img" />
           </div>
           <div className="form-floating _feed_inner_text_area_box_form">
             <textarea

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Stories from "./Stories";
 import PostCreator from "./PostCreator";
 import PostCard from "./PostCard";
 import { FeedPost } from "./types";
@@ -48,6 +49,7 @@ export default function FeedMiddle() {
     <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
       <div className="_layout_middle_wrap">
         <div className="_layout_middle_inner">
+          <Stories />
           <PostCreator onCreated={handleCreated} />
 
           {loading ? (
