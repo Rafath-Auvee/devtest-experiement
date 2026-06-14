@@ -23,11 +23,16 @@ export default function CommentSection({ postId, onCountChange }: CommentSection
       .then((res) => res.json())
       .then((data) => {
         setComments(data.comments ?? []);
-        onCountChange?.(data.comments?.length ?? 0);
       })
       .catch(() => setComments([]))
       .finally(() => setLoading(false));
-  }, [postId, onCountChange]);
+  }, [postId]);
+
+  // Keep the parent's comment count in sync — runs after render, so the
+  // updater below stays pure (no setState-in-render).
+  useEffect(() => {
+    if (!loading) onCountChange?.(comments.length);
+  }, [comments.length, loading, onCountChange]);
 
   async function postComment(value: string, parentId?: string) {
     const res = await fetch(`/api/posts/${postId}/comments`, {
@@ -40,11 +45,7 @@ export default function CommentSection({ postId, onCountChange }: CommentSection
       toast.error(data.message ?? "Failed to comment");
       return;
     }
-    setComments((prev) => {
-      const next = [...prev, data.comment];
-      onCountChange?.(next.length);
-      return next;
-    });
+    setComments((prev) => [...prev, data.comment]);
   }
 
   async function handleSubmit() {
@@ -72,7 +73,7 @@ export default function CommentSection({ postId, onCountChange }: CommentSection
         <div className="_feed_inner_comment_box_form">
           <div className="_feed_inner_comment_box_content">
             <div className="_feed_inner_comment_box_content_image">
-              <Image src={images.commentImg} alt="" width={36} height={36} className="_comment_img" />
+              <Image src={images.defaultAvatar} alt="" width={36} height={36} className="_comment_img" />
             </div>
             <div className="_feed_inner_comment_box_content_txt">
               <textarea

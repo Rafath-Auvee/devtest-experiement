@@ -1,11 +1,12 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
+import { reactionSchema, IReaction } from "@/lib/models/Post";
 
 export interface IComment extends Document {
   post: Types.ObjectId;
   author: Types.ObjectId;
   parent: Types.ObjectId | null;
   text: string;
-  likes: Types.ObjectId[];
+  reactions: IReaction[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,7 +17,7 @@ const commentSchema = new Schema<IComment>(
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     parent: { type: Schema.Types.ObjectId, ref: "Comment", default: null },
     text: { type: String, required: true, trim: true, maxlength: 2000 },
-    likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    reactions: { type: [reactionSchema], default: [] },
   },
   { timestamps: true }
 );

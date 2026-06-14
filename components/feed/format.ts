@@ -1,4 +1,4 @@
-import { PostAuthor } from "./types";
+import { Reaction } from "./types";
 
 export function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -11,12 +11,12 @@ export function timeAgo(iso: string): string {
   return `${days} day${days > 1 ? "s" : ""} ago`;
 }
 
-export function likedByText(likes: PostAuthor[]): string {
-  if (likes.length === 0) return "";
-  const names = likes.map((u) => `${u.firstName} ${u.lastName}`);
-  if (names.length === 1) return `Liked by ${names[0]}`;
-  if (names.length === 2) return `Liked by ${names[0]} and ${names[1]}`;
-  return `Liked by ${names[0]}, ${names[1]} and ${names.length - 2} other${
+export function reactedByText(reactions: Reaction[]): string {
+  if (reactions.length === 0) return "";
+  const names = reactions.map((r) => `${r.user.firstName} ${r.user.lastName}`);
+  if (names.length === 1) return `${names[0]}`;
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  return `${names[0]}, ${names[1]} and ${names.length - 2} other${
     names.length - 2 > 1 ? "s" : ""
   }`;
 }

@@ -17,15 +17,19 @@ export async function GET(
     const comments = await Comment.find({ post: id })
       .sort({ createdAt: 1 })
       .populate("author", "firstName lastName")
-      .populate("likes", "firstName lastName")
+      .populate("reactions.user", "firstName lastName")
       .lean();
 
-    const shaped = comments.map((c) => ({
-      ...c,
-      likedByMe: currentUser
-        ? c.likes.some((u) => u._id.toString() === currentUser.userId)
-        : false,
-    }));
+    const shaped = comments.map((c) => {
+      const reactions = c.reactions ?? [];
+      return {
+        ...c,
+        reactions,
+        myReaction: currentUser
+          ? reactions.find((r) => r.user?._id?.toString() === currentUser.userId)?.type ?? null
+          : null,
+      };
+    });
 
     return NextResponse.json({ comments: shaped }, { status: 200 });
   } catch (err) {
@@ -77,7 +81,7 @@ export async function POST(
       .lean();
 
     return NextResponse.json(
-      { comment: { ...populated, likes: [], likedByMe: false } },
+      { comment: { ...populated, reactions: [], myReaction: null } },
       { status: 201 }
     );
   } catch (err) {

@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import Comment from "@/lib/models/Comment";
 import { getCurrentUser } from "@/lib/auth/session";
+import { isReactionType, ReactionType } from "@/lib/reactions";
 
 export async function POST(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -15,6 +16,14 @@ export async function POST(
 
     const { id } = await params;
 
+    let type: ReactionType = "like";
+    try {
+      const body = await req.json();
+      if (isReactionType(body?.type)) type = body.type;
+    } catch {
+      /* empty body → default like */
+    }
+
     await connectDB();
 
     const comment = await Comment.findById(id);
@@ -23,29 +32,34 @@ export async function POST(
     }
 
     const userId = currentUser.userId;
-    const alreadyLiked = comment.likes.some((u) => u.toString() === userId);
+    const existing = comment.reactions.find((r) => r.user.toString() === userId);
 
-    if (alreadyLiked) {
-      comment.likes = comment.likes.filter((u) => u.toString() !== userId);
+    let myReaction: ReactionType | null;
+    if (existing) {
+      if (existing.type === type) {
+        comment.reactions = comment.reactions.filter((r) => r.user.toString() !== userId);
+        myReaction = null;
+      } else {
+        existing.type = type;
+        myReaction = type;
+      }
     } else {
-      comment.likes.push(userId as never);
+      comment.reactions.push({ user: userId, type } as never);
+      myReaction = type;
     }
 
     await comment.save();
 
     const updated = await Comment.findById(id)
-      .populate("likes", "firstName lastName")
+      .populate("reactions.user", "firstName lastName")
       .lean();
 
     return NextResponse.json(
-      {
-        likes: updated?.likes ?? [],
-        likedByMe: !alreadyLiked,
-      },
+      { reactions: updated?.reactions ?? [], myReaction },
       { status: 200 }
     );
   } catch (err) {
-    console.error("[comments:like]", err);
+    console.error("[comments:react]", err);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

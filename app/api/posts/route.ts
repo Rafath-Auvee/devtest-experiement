@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Types } from "mongoose";
 import { connectDB } from "@/lib/db/mongoose";
 import Post from "@/lib/models/Post";
+import Comment from "@/lib/models/Comment";
 import { getCurrentUser } from "@/lib/auth/session";
 
 const PAGE_SIZE = 10;
@@ -24,18 +26,31 @@ export async function GET(req: NextRequest) {
       .sort({ _id: -1 })
       .limit(PAGE_SIZE + 1)
       .populate("author", "firstName lastName")
-      .populate("likes", "firstName lastName")
+      .populate("reactions.user", "firstName lastName")
       .lean();
 
     const hasMore = posts.length > PAGE_SIZE;
     const page = hasMore ? posts.slice(0, PAGE_SIZE) : posts;
 
-    const shaped = page.map((post) => ({
-      ...post,
-      likedByMe: currentUser
-        ? post.likes.some((u) => u._id.toString() === currentUser.userId)
-        : false,
-    }));
+    // Comment counts for the page in a single aggregation.
+    const postIds = page.map((p) => new Types.ObjectId(p._id.toString()));
+    const counts = await Comment.aggregate<{ _id: Types.ObjectId; count: number }>([
+      { $match: { post: { $in: postIds } } },
+      { $group: { _id: "$post", count: { $sum: 1 } } },
+    ]);
+    const countByPost = new Map(counts.map((c) => [c._id.toString(), c.count]));
+
+    const shaped = page.map((post) => {
+      const reactions = post.reactions ?? [];
+      return {
+        ...post,
+        reactions,
+        commentCount: countByPost.get(post._id.toString()) ?? 0,
+        myReaction: currentUser
+          ? reactions.find((r) => r.user?._id?.toString() === currentUser.userId)?.type ?? null
+          : null,
+      };
+    });
 
     const nextCursor = hasMore ? page[page.length - 1]._id.toString() : null;
 
@@ -73,7 +88,7 @@ export async function POST(req: NextRequest) {
       .lean();
 
     return NextResponse.json(
-      { post: { ...populated, likes: [], likedByMe: false } },
+      { post: { ...populated, reactions: [], myReaction: null, commentCount: 0 } },
       { status: 201 }
     );
   } catch (err) {

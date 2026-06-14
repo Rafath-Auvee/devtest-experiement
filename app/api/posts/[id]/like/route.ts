@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import Post from "@/lib/models/Post";
 import { getCurrentUser } from "@/lib/auth/session";
+import { isReactionType, ReactionType } from "@/lib/reactions";
 
 export async function POST(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -15,6 +16,15 @@ export async function POST(
 
     const { id } = await params;
 
+    // Default to "like"; accept any valid reaction type from the body.
+    let type: ReactionType = "like";
+    try {
+      const body = await req.json();
+      if (isReactionType(body?.type)) type = body.type;
+    } catch {
+      /* empty body → default like */
+    }
+
     await connectDB();
 
     const post = await Post.findById(id);
@@ -23,29 +33,36 @@ export async function POST(
     }
 
     const userId = currentUser.userId;
-    const alreadyLiked = post.likes.some((u) => u.toString() === userId);
+    const existing = post.reactions.find((r) => r.user.toString() === userId);
 
-    if (alreadyLiked) {
-      post.likes = post.likes.filter((u) => u.toString() !== userId);
+    let myReaction: ReactionType | null;
+    if (existing) {
+      if (existing.type === type) {
+        // Same reaction tapped again → remove (toggle off)
+        post.reactions = post.reactions.filter((r) => r.user.toString() !== userId);
+        myReaction = null;
+      } else {
+        // Switch reaction type
+        existing.type = type;
+        myReaction = type;
+      }
     } else {
-      post.likes.push(userId as never);
+      post.reactions.push({ user: userId, type } as never);
+      myReaction = type;
     }
 
     await post.save();
 
     const updated = await Post.findById(id)
-      .populate("likes", "firstName lastName")
+      .populate("reactions.user", "firstName lastName")
       .lean();
 
     return NextResponse.json(
-      {
-        likes: updated?.likes ?? [],
-        likedByMe: !alreadyLiked,
-      },
+      { reactions: updated?.reactions ?? [], myReaction },
       { status: 200 }
     );
   } catch (err) {
-    console.error("[posts:like]", err);
+    console.error("[posts:react]", err);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

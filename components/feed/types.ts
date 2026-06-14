@@ -1,7 +1,14 @@
+import { ReactionType } from "@/lib/reactions";
+
 export interface PostAuthor {
   _id: string;
   firstName: string;
   lastName: string;
+}
+
+export interface Reaction {
+  user: PostAuthor;
+  type: ReactionType;
 }
 
 export interface FeedPost {
@@ -10,8 +17,9 @@ export interface FeedPost {
   text: string;
   image?: string;
   visibility: "public" | "private";
-  likes: PostAuthor[];
-  likedByMe: boolean;
+  reactions: Reaction[];
+  myReaction: ReactionType | null;
+  commentCount: number;
   createdAt: string;
 }
 
@@ -21,7 +29,7 @@ export interface FeedComment {
   author: PostAuthor;
   parent: string | null;
   text: string;
-  likes: PostAuthor[];
-  likedByMe: boolean;
+  reactions: Reaction[];
+  myReaction: ReactionType | null;
   createdAt: string;
 }
