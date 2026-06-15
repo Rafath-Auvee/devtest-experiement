@@ -189,14 +189,31 @@ export default function FeedNavbar({ firstName, lastName }: FeedNavbarProps) {
                   </Link>
                 </div>
                 <div className="_header_mobile_menu_right">
-                  <form className="_header_form_grp" onSubmit={(e) => e.preventDefault()}>
-                    <button type="submit" className="_header_mobile_search" aria-label="Search">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="none" viewBox="0 0 17 17">
-                        <circle cx="7" cy="7" r="6" stroke="#666" />
-                        <path stroke="#666" strokeLinecap="round" d="M16 16l-3-3" />
-                      </svg>
-                    </button>
-                  </form>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    disabled={loggingOut}
+                    aria-label="Log out"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      background: "#377DFF",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 8,
+                      padding: "8px 16px",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 19 19">
+                      <path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6.667 18H2.889A1.889 1.889 0 011 16.111V2.89A1.889 1.889 0 012.889 1h3.778M13.277 14.222L18 9.5l-4.723-4.722M18 9.5H6.667" />
+                    </svg>
+                    {loggingOut ? "Logging out..." : "Log Out"}
+                  </button>
                 </div>
               </div>
             </div>
