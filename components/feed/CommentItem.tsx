@@ -70,7 +70,10 @@ export default function CommentItem({ comment, replies = [], onReply }: CommentI
         </span>
       </div>
       <div className="_comment_area">
-        <div className="_comment_details">
+        <div
+          className="_comment_details"
+          style={{ marginBottom: reactions.length > 0 ? 22 : 8 }}
+        >
           <div className="_comment_details_top">
             <div className="_comment_name">
               <h4 className="_comment_name_title">{authorName}</h4>
@@ -87,30 +90,32 @@ export default function CommentItem({ comment, replies = [], onReply }: CommentI
             size={16}
             className="_total_reactions"
             countClassName="_total"
+            style={{ position: "absolute", top: "auto", bottom: -12, right: 8 }}
           />
-          <div className="_comment_reply">
-            <div className="_comment_reply_num">
-              <ul className="_comment_reply_list">
+        </div>
+
+        <div className="_comment_reply">
+          <div className="_comment_reply_num">
+            <ul className="_comment_reply_list">
+              <li>
+                <ReactionControl
+                  myReaction={myReaction}
+                  onReact={react}
+                  variant="comment"
+                  disabled={pending}
+                />
+              </li>
+              {!isReply && onReply && (
                 <li>
-                  <ReactionControl
-                    myReaction={myReaction}
-                    onReact={react}
-                    variant="comment"
-                    disabled={pending}
-                  />
+                  <span onClick={() => setShowReply((s) => !s)} style={{ cursor: "pointer" }}>
+                    Reply.
+                  </span>
                 </li>
-                {!isReply && onReply && (
-                  <li>
-                    <span onClick={() => setShowReply((s) => !s)} style={{ cursor: "pointer" }}>
-                      Reply.
-                    </span>
-                  </li>
-                )}
-                <li>
-                  <span className="_time_link">.{timeAgo(comment.createdAt)}</span>
-                </li>
-              </ul>
-            </div>
+              )}
+              <li>
+                <span className="_time_link">.{timeAgo(comment.createdAt)}</span>
+              </li>
+            </ul>
           </div>
         </div>
 

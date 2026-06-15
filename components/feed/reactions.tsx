@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { ReactionType, REACTION_TYPES } from "@/lib/reactions";
 import { Reaction } from "./types";
 
@@ -76,16 +79,30 @@ interface ReactionSummaryProps {
   size?: number;
   className?: string;
   countClassName?: string;
+  style?: React.CSSProperties;
 }
 
-/** Stacked reaction icons + total count. */
+/** Stacked reaction icons + total count. Click to see who reacted. */
 export function ReactionSummary({
   reactions,
   title,
   size = 20,
   className = "_feed_inner_timeline_total_reacts_image",
   countClassName = "_feed_inner_timeline_total_reacts_para",
+  style,
 }: ReactionSummaryProps) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [open]);
+
   if (reactions.length === 0) return null;
 
   // Distinct reaction types present, most-common first.
@@ -94,7 +111,13 @@ export function ReactionSummary({
   const types = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
 
   return (
-    <div className={className} title={title} style={{ display: "flex", alignItems: "center" }}>
+    <div
+      ref={ref}
+      className={className}
+      title={title}
+      onClick={() => setOpen((o) => !o)}
+      style={{ display: "flex", alignItems: "center", cursor: "pointer", position: "relative", ...style }}
+    >
       {types.map((t, i) => {
         const Icon = REACTION_META[t].Icon;
         return (
@@ -113,9 +136,47 @@ export function ReactionSummary({
           </span>
         );
       })}
-      <p className={countClassName} style={{ marginLeft: 6 }}>
+      <p className={countClassName} style={{ marginLeft: 6, marginBottom: 0 }}>
         {reactions.length}
       </p>
+
+      {open && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            position: "absolute",
+            top: "calc(100% + 8px)",
+            left: 0,
+            zIndex: 70,
+            minWidth: 200,
+            maxHeight: 240,
+            overflowY: "auto",
+            background: "#fff",
+            borderRadius: 10,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+            padding: "8px 4px",
+            cursor: "default",
+          }}
+        >
+          <p style={{ fontSize: 12, fontWeight: 600, color: "#65676B", padding: "2px 12px 6px" }}>
+            {reactions.length} {reactions.length === 1 ? "person" : "people"}
+          </p>
+          {reactions.map((r, i) => {
+            const Icon = REACTION_META[r.type].Icon;
+            return (
+              <div
+                key={i}
+                style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 12px" }}
+              >
+                <Icon size={20} />
+                <span style={{ fontSize: 14, color: "#1c1e21" }}>
+                  {r.user.firstName} {r.user.lastName}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
