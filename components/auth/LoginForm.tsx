@@ -147,6 +147,7 @@ export default function LoginForm() {
                   type="submit"
                   className="_social_login_form_btn_link _btn1"
                   disabled={loading}
+                  style={{ whiteSpace: "nowrap" }}
                 >
                   {loading ? "Logging in..." : "Login now"}
                 </button>

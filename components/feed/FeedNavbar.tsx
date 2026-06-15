@@ -152,32 +152,6 @@ export default function FeedNavbar({ firstName, lastName }: FeedNavbarProps) {
               <hr />
               <ul className="_nav_dropdown_list">
                 <li className="_nav_dropdown_list_item">
-                  <span className="_nav_dropdown_link">
-                    <div className="_nav_drop_info">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 20 20">
-                          <path stroke="#377DFF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
-                          <path stroke="#377DFF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 12.6a1.3 1.3 0 00.26 1.43l.05.05a1.6 1.6 0 11-2.26 2.26l-.05-.05a1.3 1.3 0 00-2.2.92v.13a1.6 1.6 0 11-3.2 0v-.07A1.3 1.3 0 007.5 16a1.3 1.3 0 00-1.43.26l-.05.05a1.6 1.6 0 11-2.26-2.26l.05-.05a1.3 1.3 0 00-.92-2.2H2.7a1.6 1.6 0 110-3.2h.07A1.3 1.3 0 004 7.5a1.3 1.3 0 00-.26-1.43l-.05-.05a1.6 1.6 0 112.26-2.26l.05.05A1.3 1.3 0 007.5 4a1.3 1.3 0 00.8-1.2V2.7a1.6 1.6 0 113.2 0v.07a1.3 1.3 0 002.2.92l.05-.05a1.6 1.6 0 112.26 2.26l-.05.05a1.3 1.3 0 00.92 2.2h.13a1.6 1.6 0 110 3.2h-.07a1.3 1.3 0 00-1.14.86z" />
-                        </svg>
-                      </span>
-                      Settings
-                    </div>
-                  </span>
-                </li>
-                <li className="_nav_dropdown_list_item">
-                  <span className="_nav_dropdown_link">
-                    <div className="_nav_drop_info">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 20 20">
-                          <path stroke="#377DFF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10 19a9 9 0 100-18 9 9 0 000 18z" />
-                          <path stroke="#377DFF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7.38 7.3a2.7 2.7 0 015.248.9c0 1.8-2.7 2.7-2.7 2.7M10 14.5h.009" />
-                        </svg>
-                      </span>
-                      Help &amp; Support
-                    </div>
-                  </span>
-                </li>
-                <li className="_nav_dropdown_list_item">
                   <button
                     type="button"
                     className="_nav_dropdown_link"

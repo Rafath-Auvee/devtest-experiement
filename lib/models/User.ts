@@ -16,8 +16,7 @@ const userSchema = new Schema<IUser>(
   {
     firstName: { type: String, required: true, trim: true, maxlength: 50 },
     lastName:  { type: String, required: true, trim: true, maxlength: 50 },
-    email:     { type: String, required: true, unique: true, lowercase: true, trim: true },
-    // Optional: Google-authenticated accounts have no local password.
+    email:     { type: String, required: true, lowercase: true, trim: true },
     password:  { type: String, minlength: 8, select: false },
     googleId:  { type: String, sparse: true },
     avatar:    { type: String },
@@ -25,6 +24,8 @@ const userSchema = new Schema<IUser>(
   },
   { timestamps: true }
 );
+
+userSchema.index({ email: 1 }, { unique: true });
 
 const User: Model<IUser> =
   mongoose.models.User ?? mongoose.model<IUser>("User", userSchema);
