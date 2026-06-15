@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import sharp from "sharp";
 import { getCurrentUser } from "@/lib/auth/session";
 
 const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -35,15 +34,9 @@ export async function POST(req: NextRequest) {
 
     const inputBuffer = Buffer.from(await file.arrayBuffer());
 
-    const compressed = await sharp(inputBuffer)
-      .rotate()
-      .resize({ width: 1280, height: 1280, fit: "inside", withoutEnlargement: true })
-      .jpeg({ quality: 72, mozjpeg: true })
-      .toBuffer();
-
     const body = new URLSearchParams();
     body.set("key", apiKey);
-    body.set("source", compressed.toString("base64"));
+    body.set("source", inputBuffer.toString("base64"));
     body.set("format", "json");
 
     const uploadRes = await fetch(FREEIMAGE_ENDPOINT, {

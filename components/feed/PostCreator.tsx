@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, FormEvent } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { images } from "@/lib/assets/images";
+import { optimizeImage } from "@/lib/optimizeImage";
 import { FeedPost } from "./types";
 
 interface PostCreatorProps {
@@ -72,8 +73,10 @@ export default function PostCreator({ onCreated }: PostCreatorProps) {
     try {
       let imageUrl = "";
       if (imageFile) {
+        const optimized = await optimizeImage(imageFile);
+        const ext = optimized.type === "image/gif" ? "gif" : "jpg";
         const formData = new FormData();
-        formData.append("file", imageFile);
+        formData.append("file", optimized, `upload.${ext}`);
         const upRes = await fetch("/api/upload", { method: "POST", body: formData });
         const upData = await upRes.json();
         if (!upRes.ok) {
