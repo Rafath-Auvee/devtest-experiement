@@ -123,13 +123,35 @@ export default function PostCreator({ onCreated }: PostCreatorProps) {
           <div className="_feed_inner_text_area_box_image">
             <Image src={images.defaultAvatar} alt="" width={40} height={40} className="_txt_img" />
           </div>
-          <div className="form-floating _feed_inner_text_area_box_form">
+          <div className="form-floating _feed_inner_text_area_box_form" style={{ position: "relative" }}>
             <textarea
               className="form-control _textarea"
-              placeholder="Write something ..."
+              aria-label="Write something"
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
+            {text.length === 0 && (
+              <div
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  top: 16,
+                  left: 14,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  pointerEvents: "none",
+                  color: "var(--color7)",
+                  fontSize: 16,
+                }}
+              >
+                <span>Write something ...</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
 
