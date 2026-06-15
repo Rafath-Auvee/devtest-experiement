@@ -95,7 +95,7 @@ export default function CommentItem({ comment, replies = [], onReply }: CommentI
         </div>
 
         <div className="_comment_reply">
-          <div className="_comment_reply_num">
+          <div className="_comment_reply_num" style={{ position: "static" }}>
             <ul className="_comment_reply_list">
               <li>
                 <ReactionControl

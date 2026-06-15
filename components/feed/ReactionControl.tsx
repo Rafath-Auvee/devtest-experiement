@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ReactionType } from "@/lib/reactions";
 import { REACTION_META, REACTION_ORDER } from "./reactions";
 
@@ -18,23 +18,57 @@ export default function ReactionControl({
   disabled,
 }: ReactionControlProps) {
   const [open, setOpen] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressed = useRef(false);
+  const rootRef = useRef<HTMLElement | null>(null);
 
   function show() {
-    if (timer.current) clearTimeout(timer.current);
+    if (hideTimer.current) clearTimeout(hideTimer.current);
     setOpen(true);
   }
   function hideSoon() {
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setOpen(false), 220);
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    hideTimer.current = setTimeout(() => setOpen(false), 220);
   }
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent | TouchEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("touchstart", onDown);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("touchstart", onDown);
+    };
+  }, [open]);
 
   function pick(type: ReactionType) {
     setOpen(false);
     onReact(type);
   }
-  function handleMainClick() {
+
+  // Quick tap/click = like (or remove your current reaction). Press-and-hold = picker.
+  function handleClick() {
+    if (disabled) return;
+    if (longPressed.current) {
+      longPressed.current = false;
+      return;
+    }
     onReact(myReaction ?? "like");
+  }
+  function pressStart() {
+    if (disabled) return;
+    longPressed.current = false;
+    longPressTimer.current = setTimeout(() => {
+      longPressed.current = true;
+      setOpen(true);
+    }, 400);
+  }
+  function pressEnd() {
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
   }
 
   const active = myReaction ? REACTION_META[myReaction] : null;
@@ -85,18 +119,45 @@ export default function ReactionControl({
     </div>
   );
 
+  const sharedHandlers = {
+    onClick: handleClick,
+    onMouseEnter: show,
+    onMouseLeave: () => {
+      hideSoon();
+      pressEnd();
+    },
+    onPointerDown: pressStart,
+    onPointerUp: pressEnd,
+  };
+
   if (variant === "comment") {
     return (
       <span
+        ref={(el) => { rootRef.current = el; }}
         style={{ position: "relative", display: "inline-block" }}
-        onMouseEnter={show}
-        onMouseLeave={hideSoon}
       >
         <span
-          onClick={disabled ? undefined : handleMainClick}
-          style={{ cursor: disabled ? "default" : "pointer", color: active?.color }}
+          role="button"
+          tabIndex={0}
+          {...sharedHandlers}
+          style={{
+            cursor: disabled ? "default" : "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            color: active?.color,
+            fontWeight: active ? 600 : undefined,
+            userSelect: "none",
+          }}
         >
-          {active ? active.label : "Like"}.
+          {ActiveIcon ? (
+            <ActiveIcon size={15} />
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+            </svg>
+          )}
+          {`${active ? active.label : "Like"}.`}
         </span>
         {picker}
       </span>
@@ -105,8 +166,7 @@ export default function ReactionControl({
 
   return (
     <div
-      onMouseEnter={show}
-      onMouseLeave={hideSoon}
+      ref={(el) => { rootRef.current = el; }}
       className={`_feed_inner_timeline_reaction_emoji _feed_reaction${active ? " _feed_reaction_active" : ""}`}
       style={{ position: "relative" }}
     >
@@ -114,8 +174,8 @@ export default function ReactionControl({
         className="_feed_inner_timeline_reaction_link"
         role="button"
         tabIndex={0}
-        onClick={disabled ? undefined : handleMainClick}
-        style={{ cursor: disabled ? "default" : "pointer" }}
+        {...sharedHandlers}
+        style={{ cursor: disabled ? "default" : "pointer", userSelect: "none" }}
       >
         <span style={{ display: "inline-flex", alignItems: "center", gap: 6, color: active?.color }}>
           {ActiveIcon ? <ActiveIcon size={18} /> : (
