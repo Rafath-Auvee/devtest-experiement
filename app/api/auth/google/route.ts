@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { buildGoogleAuthUrl, isGoogleConfigured } from "@/lib/auth/google";
 
-// Starts the Google OAuth flow: sets a CSRF state cookie and redirects to consent.
 export async function GET(req: NextRequest) {
   if (!isGoogleConfigured()) {
     return NextResponse.redirect(

@@ -193,7 +193,7 @@ export default function RegisterForm() {
                   type="submit"
                   className="_social_registration_form_btn_link _btn1"
                   disabled={loading}
-                  style={{ whiteSpace: "nowrap" }}
+                  style={{ whiteSpace: "nowrap", width: "100%" }}
                 >
                   {loading ? "Creating account..." : "Register now"}
                 </button>

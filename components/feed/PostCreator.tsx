@@ -18,11 +18,10 @@ export default function PostCreator({ onCreated }: PostCreatorProps) {
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState("");
-  const [imageLoading, setImageLoading] = useState(false); // true while the local preview loads
-  const [loading, setLoading] = useState(false); // true while posting (upload + create)
+  const [imageLoading, setImageLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Clean up the object URL on unmount.
   useEffect(() => {
     return () => {
       if (imagePreview) URL.revokeObjectURL(imagePreview);
@@ -39,8 +38,6 @@ export default function PostCreator({ onCreated }: PostCreatorProps) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  // Selecting a file does NOT upload — it only previews locally.
-  // The image is uploaded (optimized) to the image host at post time.
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -57,7 +54,7 @@ export default function PostCreator({ onCreated }: PostCreatorProps) {
     if (imagePreview) URL.revokeObjectURL(imagePreview);
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
-    setImageLoading(true); // disables Post until the preview has rendered
+    setImageLoading(true);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -67,14 +64,12 @@ export default function PostCreator({ onCreated }: PostCreatorProps) {
       toast.error("Write something first");
       return;
     }
-    if (imageLoading) return; // image still loading — Post is disabled anyway
+    if (imageLoading) return;
 
     setLoading(true);
-    // One toast that updates through the whole flow: loading → success/error.
     const toastId = toast.loading(imageFile ? "Uploading image…" : "Publishing post…");
 
     try {
-      // Upload the image to the host (server optimizes it) only now, at post time.
       let imageUrl = "";
       if (imageFile) {
         const formData = new FormData();
@@ -157,7 +152,6 @@ export default function PostCreator({ onCreated }: PostCreatorProps) {
 
         {imagePreview && (
           <div className="_feed_inner_timeline_image" style={{ position: "relative", marginBottom: "16px" }}>
-            {/* Local preview only — not uploaded yet. Plain img since it's a blob: URL. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imagePreview}

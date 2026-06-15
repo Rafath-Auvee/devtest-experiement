@@ -28,8 +28,6 @@ export default function CommentSection({ postId, onCountChange }: CommentSection
       .finally(() => setLoading(false));
   }, [postId]);
 
-  // Keep the parent's comment count in sync — runs after render, so the
-  // updater below stays pure (no setState-in-render).
   useEffect(() => {
     if (!loading) onCountChange?.(comments.length);
   }, [comments.length, loading, onCountChange]);

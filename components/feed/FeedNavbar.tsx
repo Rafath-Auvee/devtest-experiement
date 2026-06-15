@@ -176,7 +176,6 @@ export default function FeedNavbar({ firstName, lastName }: FeedNavbarProps) {
       </div>
     </nav>
 
-    {/* Mobile top bar (shown < 992px) */}
     <div className="_header_mobile_menu">
       <div className="_header_mobile_menu_wrap">
         <div className="container">
@@ -222,7 +221,6 @@ export default function FeedNavbar({ firstName, lastName }: FeedNavbarProps) {
       </div>
     </div>
 
-    {/* Mobile bottom navigation (shown < 992px) */}
     <div className="_mobile_navigation_bottom_wrapper">
       <div className="_mobile_navigation_bottom_wrap">
         <div className="container">

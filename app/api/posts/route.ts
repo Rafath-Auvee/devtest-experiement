@@ -32,7 +32,6 @@ export async function GET(req: NextRequest) {
     const hasMore = posts.length > PAGE_SIZE;
     const page = hasMore ? posts.slice(0, PAGE_SIZE) : posts;
 
-    // Comment counts for the page in a single aggregation.
     const postIds = page.map((p) => new Types.ObjectId(p._id.toString()));
     const counts = await Comment.aggregate<{ _id: Types.ObjectId; count: number }>([
       { $match: { post: { $in: postIds } } },

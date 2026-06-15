@@ -8,7 +8,6 @@ interface IconProps {
   size?: number;
 }
 
-/** Default inline SVG icons for each reaction (no external assets needed). */
 function LikeIcon({ size = 20 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="#2078F4" aria-hidden>
@@ -82,7 +81,6 @@ interface ReactionSummaryProps {
   style?: React.CSSProperties;
 }
 
-/** Stacked reaction icons + total count. Click to see who reacted. */
 export function ReactionSummary({
   reactions,
   title,
@@ -105,7 +103,6 @@ export function ReactionSummary({
 
   if (reactions.length === 0) return null;
 
-  // Distinct reaction types present, most-common first.
   const counts = new Map<ReactionType, number>();
   for (const r of reactions) counts.set(r.type, (counts.get(r.type) ?? 0) + 1);
   const types = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);

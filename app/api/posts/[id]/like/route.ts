@@ -16,13 +16,11 @@ export async function POST(
 
     const { id } = await params;
 
-    // Default to "like"; accept any valid reaction type from the body.
     let type: ReactionType = "like";
     try {
       const body = await req.json();
       if (isReactionType(body?.type)) type = body.type;
     } catch {
-      /* empty body → default like */
     }
 
     await connectDB();
@@ -38,11 +36,9 @@ export async function POST(
     let myReaction: ReactionType | null;
     if (existing) {
       if (existing.type === type) {
-        // Same reaction tapped again → remove (toggle off)
         post.reactions = post.reactions.filter((r) => r.user.toString() !== userId);
         myReaction = null;
       } else {
-        // Switch reaction type
         existing.type = type;
         myReaction = type;
       }

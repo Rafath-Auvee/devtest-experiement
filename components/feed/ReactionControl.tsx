@@ -34,7 +34,6 @@ export default function ReactionControl({
     onReact(type);
   }
   function handleMainClick() {
-    // Tap toggles your current reaction off, or adds a default "like".
     onReact(myReaction ?? "like");
   }
 

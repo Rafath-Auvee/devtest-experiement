@@ -22,7 +22,6 @@ export default function LoginForm() {
   });
   const [loading, setLoading] = useState(false);
 
-  // Surface OAuth errors redirected back from /api/auth/google/callback?error=...
   useEffect(() => {
     const error = new URLSearchParams(window.location.search).get("error");
     if (error) {
@@ -147,7 +146,7 @@ export default function LoginForm() {
                   type="submit"
                   className="_social_login_form_btn_link _btn1"
                   disabled={loading}
-                  style={{ whiteSpace: "nowrap" }}
+                  style={{ whiteSpace: "nowrap", width: "100%" }}
                 >
                   {loading ? "Logging in..." : "Login now"}
                 </button>

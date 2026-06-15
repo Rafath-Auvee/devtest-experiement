@@ -16,7 +16,6 @@ export function isGoogleConfigured(): boolean {
   return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 }
 
-/** Builds the Google consent-screen URL for the authorization-code flow. */
 export function buildGoogleAuthUrl(redirectUri: string, state: string): string {
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID as string,
@@ -30,7 +29,6 @@ export function buildGoogleAuthUrl(redirectUri: string, state: string): string {
   return `${GOOGLE_AUTH_URL}?${params.toString()}`;
 }
 
-/** Exchanges an authorization code for an access token. */
 export async function exchangeCodeForToken(code: string, redirectUri: string): Promise<string> {
   const res = await fetch(GOOGLE_TOKEN_URL, {
     method: "POST",
@@ -51,7 +49,6 @@ export async function exchangeCodeForToken(code: string, redirectUri: string): P
   return data.access_token;
 }
 
-/** Fetches the user's profile using the access token. */
 export async function fetchGoogleProfile(accessToken: string): Promise<GoogleProfile> {
   const res = await fetch(GOOGLE_USERINFO_URL, {
     headers: { Authorization: `Bearer ${accessToken}` },

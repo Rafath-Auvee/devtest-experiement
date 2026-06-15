@@ -21,7 +21,6 @@ export async function POST(
       const body = await req.json();
       if (isReactionType(body?.type)) type = body.type;
     } catch {
-      /* empty body → default like */
     }
 
     await connectDB();

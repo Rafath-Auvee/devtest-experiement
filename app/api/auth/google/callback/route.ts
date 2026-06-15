@@ -9,7 +9,6 @@ function fail(origin: string, message: string) {
   return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(message)}`);
 }
 
-// Handles the Google redirect: verifies state, upserts the user, issues the auth_token cookie.
 export async function GET(req: NextRequest) {
   const origin = req.nextUrl.origin;
   const { searchParams } = req.nextUrl;
@@ -42,7 +41,6 @@ export async function GET(req: NextRequest) {
     let user = await User.findOne({ email });
 
     if (!user) {
-      // Sign up
       user = await User.create({
         firstName,
         lastName,
@@ -52,7 +50,6 @@ export async function GET(req: NextRequest) {
         provider: "google",
       });
     } else if (!user.googleId) {
-      // Link Google to an existing local account (email already verified by Google)
       user.googleId = profile.sub;
       if (profile.picture && !user.avatar) user.avatar = profile.picture;
       await user.save();

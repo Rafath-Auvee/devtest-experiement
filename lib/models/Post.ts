@@ -1,6 +1,5 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import { REACTION_TYPES, ReactionType } from "@/lib/reactions";
-// Ensure the referenced User model is registered before any populate("author"/"reactions.user").
 import "@/lib/models/User";
 
 export type PostVisibility = "public" | "private";

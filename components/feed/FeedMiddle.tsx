@@ -13,7 +13,7 @@ export default function FeedMiddle() {
   const [nextCursor, setNextCursor] = useState<string | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const loadingMoreRef = useRef(false); // guards against duplicate concurrent loads
+  const loadingMoreRef = useRef(false);
 
   const loadPosts = useCallback(async (cursor?: string) => {
     const url = cursor ? `/api/posts?cursor=${cursor}` : "/api/posts";
@@ -37,7 +37,6 @@ export default function FeedMiddle() {
     loadingMoreRef.current = true;
     setLoadingMore(true);
     try {
-      // Keep the loading state visible for ~2s so infinite scroll is observable.
       const [data] = await Promise.all([
         loadPosts(nextCursor),
         new Promise((resolve) => setTimeout(resolve, 2000)),
@@ -50,7 +49,6 @@ export default function FeedMiddle() {
     }
   }, [nextCursor, loadPosts]);
 
-  // Infinite scroll: fetch the next page when the sentinel nears the viewport.
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el || !nextCursor) return;
@@ -87,7 +85,6 @@ export default function FeedMiddle() {
                 <PostCard key={post._id} post={post} />
               ))}
 
-              {/* Infinite-scroll trigger */}
               <div ref={sentinelRef} aria-hidden style={{ height: 1 }} />
 
               {loadingMore && (
@@ -102,7 +99,6 @@ export default function FeedMiddle() {
                 </p>
               )}
 
-              {/* Accessible fallback if IntersectionObserver doesn't fire */}
               {nextCursor && !loadingMore && (
                 <div style={{ textAlign: "center", padding: "8px 0 24px" }}>
                   <button
